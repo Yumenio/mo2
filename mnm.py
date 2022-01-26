@@ -21,16 +21,19 @@ class Canvas(Scene):
     r3 = ax.plot(f3, x_range = range, use_smoothing=True)
 
     s_a = [f1,f2,f3]
-    ii = self.get_np_intersections(s_a)
+    function_intersections = self.get_np_intersections(s_a)
+    print(function_intersections)
     
-    # s_a = [r1,r2,r3]
-    # gt = GetIntersections()
-    # ii = gt.get_intersections_between_two_vmobs(r1, r2)
+    inter_points = [Point(i, color=RED) for i in function_intersections]
 
-    print(ii)
 
     self.add(ax, r1,r2,r3)
+    self.add(*inter_points)
 
+
+  '''
+  too inefficient, might delete later
+  '''
   @staticmethod
   def get_brute_intersections(functions):
     gt = GetIntersections()
@@ -38,8 +41,7 @@ class Canvas(Scene):
     inter = []
     for fi, fj in itertools.combinations(functions,2):
       fi_fj = gt.get_intersections_between_two_vmobs(fi,fj)
-      print(fi_fj)
-      inter.append(fi_fj)  # 1 points is more than enough
+      inter.append(fi_fj[0])  # 1 points is more than enough
 
     return inter
 
@@ -51,12 +53,13 @@ class Canvas(Scene):
     for fi, fj in itertools.combinations(functions,2):
       fix = np.array([fi(i) for i in x])
       fjx = np.array([fj(i) for i in x])
-      idx = np.argwhere(np.diff(np.sign(fix - fjx))).flatten()
-
-      fi_fj = [np.array([x[idx], fi(x[idx])])]
-
-      print(fi_fj)
-      inter.append(fi_fj)  # 1 points is more than enough
+      idx = np.argwhere(np.diff(np.sign(fix - fjx))).flatten()  # find the intersections between the functions, all credits to stackOverflow
+      print("a", idx)
+      print("b", x[idx])
+      print("c", fi(x[idx]))
+      fi_fj = np.array([x[idx].tolist()[0], fi(x[idx]).tolist()[0], 0])  # append the point of intersection, 3rd dimension is added for compatibility with manim
+      # fi_fj = [np.array([x[idx], fi(x[idx]), 0])]  # append the point of intersection, 3rd dimension is added for compatibility with manim
+      inter.append(fi_fj)
 
     return inter
 
