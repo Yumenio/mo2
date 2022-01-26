@@ -20,9 +20,10 @@ class Canvas(Scene):
     r2 = ax.plot(f2, x_range = range, use_smoothing=True)
     r3 = ax.plot(f3, x_range = range, use_smoothing=True)
 
-    s_a = [r1,r2,r3]
+    s_a = [f1,f2,f3]
     ii = self.get_np_intersections(s_a)
     
+    # s_a = [r1,r2,r3]
     # gt = GetIntersections()
     # ii = gt.get_intersections_between_two_vmobs(r1, r2)
 
@@ -36,7 +37,6 @@ class Canvas(Scene):
     
     inter = []
     for fi, fj in itertools.combinations(functions,2):
-      print("intersection between", fi, fj)
       fi_fj = gt.get_intersections_between_two_vmobs(fi,fj)
       print(fi_fj)
       inter.append(fi_fj)  # 1 points is more than enough
@@ -49,9 +49,8 @@ class Canvas(Scene):
     xinit, xend, step = range
     x = np.arange(xinit, xend, step)
     for fi, fj in itertools.combinations(functions,2):
-      print("intersection between", fi, fj)
-      fix = [fi(i) for i in x]
-      fjx = [fj(i) for i in x]
+      fix = np.array([fi(i) for i in x])
+      fjx = np.array([fj(i) for i in x])
       idx = np.argwhere(np.diff(np.sign(fix - fjx))).flatten()
 
       fi_fj = [np.array([x[idx], fi(x[idx])])]
