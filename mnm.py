@@ -24,10 +24,9 @@ class Canvas(Scene):
     function_intersections = self.get_np_intersections(s_a)
     print(function_intersections)
     
-    inter_points = [Point(i, color=WHITE) for i in function_intersections]
+    inter_points = [Dot(ax.coords_to_point(*i), color=GREEN) for i in function_intersections]
     # adjusted_points = [ ax.point_to_coords(i) for i in inter_points]
 
-    # print(inter_points)
     pp = ax.point_to_coords([0.83,0.33,0])
     ppoint = Point([pp[0],pp[1],0], color=RED)
     ppoint = Point([3,1,0], color=RED)
@@ -35,7 +34,6 @@ class Canvas(Scene):
 
     self.add(ax, r1,r2,r3)
     self.add(*inter_points) ## this plots the points with respect to the origin of the scene, not with respect to the origin of the Axes vmobject
-    self.add(ppoint)
 
   '''
   too inefficient, might delete later
@@ -60,7 +58,7 @@ class Canvas(Scene):
       fix = np.array([fi(i) for i in x])
       fjx = np.array([fj(i) for i in x])
       idx = np.argwhere(np.diff(np.sign(fix - fjx))).flatten()  # find the intersections between the functions, all credits to stackOverflow
-      fi_fj = [np.array([x[i], fi(x[i]), 0]) for i in idx]  # append the point of intersection, 3rd dimension is added for compatibility with manim
+      fi_fj = [np.array([x[i], fi(x[i])]) for i in idx]  # append the point of intersection, 3rd dimension is added for compatibility with manim
       inter.extend(fi_fj)
 
     return inter
