@@ -15,5 +15,9 @@ s += x >= 0
 c = CyLPArray([1,1])
 s.objective = c * x
 
-print(s.primal())
+s.primal(startFinishOptions='sfx')
 print(s.primalVariableSolution['x'])
+
+print(s.tableau)
+
+print('aber')
