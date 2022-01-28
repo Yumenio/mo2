@@ -28,6 +28,8 @@ print('aber')
 
 
             
-cp.solve(MILPInstance(module_name = 'examples.e1'),
+cc = cp.bnSolve(MILPInstance(module_name = 'examples.e1'),
       whichCuts = [(cp.gomoryMixedIntegerCut, {})],
-      display = True, debug_print = True, use_cglp = False)
+      display = False, debug_print = True, use_cglp = False)
+
+print(cc)
