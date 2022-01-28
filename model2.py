@@ -1,6 +1,8 @@
 import numpy as np
 from cylp.cy import CyClpSimplex
 from cylp.py.modeling.CyLPModel import CyLPArray
+import coinor.cuppy.cuttingPlanes as cp
+from coinor.cuppy.milpInstance import MILPInstance
 
 s = CyClpSimplex()
 
@@ -12,6 +14,7 @@ a = np.matrix([-1,0,30])
 s += A * x <= a
 s += x >= 0
 
+
 c = CyLPArray([1,1])
 s.objective = c * x
 
@@ -21,3 +24,10 @@ print(s.primalVariableSolution['x'])
 print(s.tableau)
 
 print('aber')
+
+
+
+            
+cp.solve(MILPInstance(module_name = 'examples.e1'),
+      whichCuts = [(cp.gomoryMixedIntegerCut, {})],
+      display = True, debug_print = True, use_cglp = False)
