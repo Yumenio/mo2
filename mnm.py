@@ -2,6 +2,8 @@ from manim import *
 import itertools
 import numpy as np
 from utils import GetIntersections#get_intersections_between_two_vmobs
+import coinor.cuppy.cuttingPlanes as cp
+from coinor.cuppy.milpInstance import MILPInstance
 
 class Canvas(Scene):
   def construct(self):
@@ -14,7 +16,7 @@ class Canvas(Scene):
     f3 = lambda x: 10-(5*x/3)
 
 
-    range = [-8,8]
+    range = [-2,8]
 
     r1 = ax.plot(f1, x_range = range, use_smoothing=True)
     r2 = ax.plot(f2, x_range = range, use_smoothing=True)
@@ -25,15 +27,20 @@ class Canvas(Scene):
     print(function_intersections)
     
     inter_points = [Dot(ax.coords_to_point(*i), color=GREEN) for i in function_intersections]
-    # adjusted_points = [ ax.point_to_coords(i) for i in inter_points]
-
-    pp = ax.point_to_coords([0.83,0.33,0])
-    ppoint = Point([pp[0],pp[1],0], color=RED)
-    ppoint = Point([3,1,0], color=RED)
-
+    
 
     self.add(ax, r1,r2,r3)
-    self.add(*inter_points) ## this plots the points with respect to the origin of the scene, not with respect to the origin of the Axes vmobject
+    self.add(*inter_points)
+        
+    cc = cp.bnSolve(MILPInstance(module_name = 'examples.e1'),
+          whichCuts = [(cp.gomoryMixedIntegerCut, {})],
+          display = False, debug_print = False, use_cglp = False)
+
+    print(cc)
+
+  @staticmethod
+  def cutToLambda(cuts):
+    print(cuts)
 
   '''
   too inefficient, might delete later
