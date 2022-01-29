@@ -36,11 +36,31 @@ class Canvas(Scene):
           whichCuts = [(cp.gomoryMixedIntegerCut, {})],
           display = False, debug_print = False, use_cglp = False)
 
-    print(cc)
+    lambda_cuts = self.cutToLambda(cc)
+    cutGraphs = [ax.plot(i,x_range=range,use_smoothing=True) for i in lambda_cuts]
+    self.add(*cutGraphs)
+
 
   @staticmethod
   def cutToLambda(cuts):
-    print(cuts)
+    lmbs = []
+    for cut in cuts:
+      # the cut has the form ax+by=c
+
+      # case of b = 0
+      if cut.left.left[1]==0:
+        print(cut.right/cut.left.left[0])
+        lmb = lambda x : cut.right / cut.left.left[0]
+
+      # case of y = (c-ax)/b
+      else:
+        print(cut.right - cut.left.left[0],'x/',cut.left.left[1])
+        lmb = lambda x : (cut.right - (cut.left.left[0] * x) ) / cut.left.left[1]
+      
+      lmbs.append(lmb)
+    
+    return  lmbs
+
 
   '''
   too inefficient, might delete later
