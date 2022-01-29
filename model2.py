@@ -8,9 +8,20 @@ def cutsToLambda(cuts):
 	print(cuts)
 	lmbs = []
 	for cut in cuts:
+		# the cut has the form ax+by=c
+
+		# case of b = 0
 		if cut.left.left[1]==0:
 			print(cut.right/cut.left.left[0])
-			lmb = lambda x : cut.right / cut.left.left[0] 
+			lmb = lambda x : cut.right / cut.left.left[0]
+
+		# case of y = (c-ax)b
+		else:
+			lmb = lambda x : (cut.right - (cut.left.left[0] * x) ) / cut.left.left[1]
+		
+		lmbs.append(lmb)
+	
+	return  lmbs
 
 
 if __name__ == '__main__':	
