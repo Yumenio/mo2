@@ -75,7 +75,7 @@ if __name__ == '__main__':
 
 
 							
-	cc = cp.bnSolve(MILPInstance(module_name = 'examples.e1'),
+	sol, cc = cp.bnSolve(MILPInstance(module_name = 'examples.e1'),
 		whichCuts = [(cp.liftAndProject, {})],
 		display = False, debug_print = False, use_cglp = False)
 

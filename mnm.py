@@ -1,6 +1,7 @@
 from manim import *
 import itertools
 import numpy as np
+from random import choice
 from utils import GetIntersections#get_intersections_between_two_vmobs
 import coinor.cuppy.cuttingPlanes as cp
 from coinor.cuppy.milpInstance import MILPInstance
@@ -28,30 +29,30 @@ class Canvas(Scene):
     print(function_intersections)
     
     inter_points = [Dot(ax.coords_to_point(*i), color=GREEN) for i in function_intersections]
-    
+    # inner_points = self.innerPoints(function_intersections)
+    # inner_dots = [Dot(ax.coords_to_point(*i), color = BLUE) for i in inner_points]
+    # self.add(*inner_dots)
 
     self.add(ax, r1,r2,r3)
     self.add(*inter_points)
         
-    cc = cp.bnSolve(MILPInstance(module_name = 'examples.e1'),
-          # whichCuts = [(cp.gomoryMixedIntegerCut, {})],
-          whichCuts = [(cp.liftAndProject, {})],
-          display = False, debug_print = False, use_cglp = False)
-
-    # self.get_vertical_line
+    sol, cc = cp.bnSolve(MILPInstance(module_name = 'examples.e2'),
+          whichCuts = [(cp.gomoryMixedIntegerCut, {})],   # this one generates some really odd cuts, and manim is buggy when interpolating those lines with too big coefficients in a small scale
+          # whichCuts = [(cp.liftAndProject, {})],
+          display = True, debug_print = False, use_cglp = False)
+    sol_dot = Dot(ax.coords_to_point(*sol), color=RED)
+    self.add(sol_dot)
     
     colors = [RED, GREEN, BLUE, YELLOW, PURPLE, GREY_BROWN, PINK]
-    i = 0
     for lambda_cut, vertical in self.cutToLambda(cc):
       if vertical:
         point = ax.coords_to_point(lambda_cut, 10)
         vline = ax.get_vertical_line(point)
         self.add(vline)
       else:
-        print("aber corte")
-        cutGraph = ax.plot(lambda_cut,x_range=range,use_smoothing=True, color=colors[i])
+        # print("aber corte")
+        cutGraph = ax.plot(lambda_cut,x_range=range,use_smoothing=True, color=choice(colors))
         self.add(cutGraph)
-      i+=1
 
 
   @staticmethod
@@ -59,7 +60,7 @@ class Canvas(Scene):
     lmbs = []
     for cut in cuts:
       # the cut has the form ax+by=c
-      print(cut)
+      # print(cut)
       a,b,c = cut.left.left[0], cut.left.left[1], cut.right
       vertical = False
 
@@ -67,7 +68,7 @@ class Canvas(Scene):
         m = max([abs(a), abs(b), abs(c)])
         a, b, c = a/m, b/m, c/m
 
-      print(a,b,c)
+      # print(a,b,c)
 
       # case of b = 0, vertical line
       if b == 0:
@@ -83,7 +84,29 @@ class Canvas(Scene):
 
       yield lmb, vertical
     
+  @staticmethod
+  def innerPoints(intersection_points):
+    points = []
+    xmin = intersection_points[0][0]
+    ymin = intersection_points[0][0]
+    xmax = intersection_points[0][0]
+    ymax = intersection_points[0][1]
+    for point in intersection_points:
+      xmin = point[0] if point[0] < xmin else xmin
+      ymin = point[1] if point[1] < ymin else ymin
+      xmax = point[0] if point[0] > xmax else xmax
+      ymax = point[1] if point[1] > ymax else ymax
 
+    xmin = int(xmin) if xmin-int(xmin) < 1e-5 else int(xmin) + 1
+    xmax = int(xmax)
+    ymin = int(ymin) if ymin-int(ymin) < 1e-5 else int(ymin) + 1
+    ymax = int(ymax)
+
+    for i in range(xmin, xmax, 1):
+      for j in range(ymin, ymax, 1):
+        points.append((i,j))
+
+    return points
 
   '''
   too inefficient, might delete later

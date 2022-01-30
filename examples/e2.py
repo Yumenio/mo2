@@ -1,21 +1,25 @@
-# conferencia 1 de PC de MO1
+# http://sites.ju.edu.jo/sites/Alzalg/Documents/973/CPpres.pdf
+
+import numpy as np
 
 import numpy as np
 
 numVars = 2 #number of variables
-numCons = 3 #constraints number
-A = np.array([[ -2,  2],
-     [  2,  -5],
-     [  5,  3],
+numCons = 4 #constraints number
+A = np.array([[ 1,  1],
+     [  5,  9],
+     [ -1,  0],
+     [  0, -1]
      ])
-b = np.array([-1,
+b = np.array([6,
+      45,
       0,
-      30
+      0
     ])
-sense = ('Min', '<=')
+sense = ('Max', '<=')
 integerIndices = [0, 1]
 
-c = np.array([1, 1])
+c = np.array([5, 8])
 obj_val = 2 
 
 ## this all is unnecesary, keeping it just in case i need it later on
