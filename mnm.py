@@ -8,7 +8,7 @@ from coinor.cuppy.milpInstance import MILPInstance
 class Canvas(Scene):
   def construct(self):
     # ax = NumberPlane(x_length=8, y_length=8)
-    ax = Axes(x_range=[0,80,10], y_range=[0,100,50], tips=True)
+    ax = Axes(x_range=[0,8,1], y_range=[0,8,1], tips=True)
 
     graph = ax.plot(lambda x: x**2, x_range=[0.01,4], use_smoothing=True)
 
@@ -34,12 +34,13 @@ class Canvas(Scene):
     self.add(*inter_points)
         
     cc = cp.bnSolve(MILPInstance(module_name = 'examples.e1'),
-          whichCuts = [(cp.gomoryMixedIntegerCut, {})],
+          # whichCuts = [(cp.gomoryMixedIntegerCut, {})],
+          whichCuts = [(cp.liftAndProject, {})],
           display = False, debug_print = False, use_cglp = False)
 
     # self.get_vertical_line
     
-    colors = [RED, GREEN, BLUE, YELLOW]
+    colors = [RED, GREEN, BLUE, YELLOW, PURPLE, GREY_BROWN, PINK]
     i = 0
     for lambda_cut, vertical in self.cutToLambda(cc):
       if vertical:
