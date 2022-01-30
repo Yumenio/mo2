@@ -12,17 +12,42 @@ def cutsToLambda(cuts):
 
 		# case of b = 0
 		if cut.left.left[1]==0:
-			print(cut.right/cut.left.left[0])
-			lmb = lambda x : cut.right / cut.left.left[0]
+			c = cut.right
+			a = cut.left.left[0]
+			lmb = lambda x : c / a
 
 		# case of y = (c-ax)/b
 		else:
-			print(cut.right - cut.left.left[0],'x/',cut.left.left[1])
-			lmb = lambda x : ( cut.right - ( cut.left.left[0] * x) ) / 20 #cut.left.left[1]
+			c = cut.right
+			a = cut.left.left[0]
+			b = cut.left.left[1]
+			lmb = lambda x : print(a,b,c,(c-a*x)/b)
 		
 		lmbs.append(lmb)
 	
 	return  lmbs
+
+def ycutToLambda(cuts):
+    lmbs = []
+    for cut in cuts:
+      # the cut has the form ax+by=c
+
+      vertical = False
+
+      # case of b = 0
+      if cut.left.left[1]==0:
+        # print(cut.right/cut.left.left[0])
+        lmb = lambda x : cut.right / cut.left.left[0]
+
+      elif cut.left.left[0] == 0:
+        lmb, vertical = cut.right / cut.left.left[1], True
+
+      # case of y = (c-ax)/b
+      else:
+        # print(cut.right - cut.left.left[0],'x/',cut.left.left[1])
+        lmb = lambda x : (cut.right - (cut.left.left[0] * x) ) / cut.left.left[1]
+
+      yield lmb, vertical
 
 
 if __name__ == '__main__':	
@@ -51,14 +76,10 @@ if __name__ == '__main__':
 
 							
 	cc = cp.bnSolve(MILPInstance(module_name = 'examples.e1'),
-		whichCuts = [(cp.gomoryMixedIntegerCut, {})],
-		display = False, debug_print = True, use_cglp = False)
+		whichCuts = [(cp.liftAndProject, {})],
+		display = False, debug_print = False, use_cglp = False)
 
-	lmb = cutsToLambda(cc)
-	print(lmb)
-	ys = [[lmbi(j) for j in np.arange(0,10,0.5)] for lmbi in lmb]
-	print(ys)
 
 	ll = lambda x : (-1.49999 - (-0.0 * x) ) / -1.5
-	ylmb = [ ll(j) for j in np.arange(0,10,0.5)]
-	print(ylmb)
+	for ylmb in ycutToLambda(cc):
+		print(ylmb)

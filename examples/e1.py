@@ -1,17 +1,19 @@
+import numpy as np
+
 numVars = 2 #number of variables
 numCons = 3 #constraints number
-A = [[ -2,  2],
+A = np.array([[ -2,  2],
      [  2,  -5],
      [  5,  3],
-     ]
-b = [-1,
+     ])
+b = np.array([-1,
       0,
       30
-    ]
+    ])
 sense = ('Min', '<=')
 integerIndices = [0, 1]
 
-c = [1, 1]
+c = np.array([1, 1])
 obj_val = 2 
 
 ## this all doesn nothing, keeping it just in case i need it later on

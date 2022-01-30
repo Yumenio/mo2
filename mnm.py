@@ -7,7 +7,8 @@ from coinor.cuppy.milpInstance import MILPInstance
 
 class Canvas(Scene):
   def construct(self):
-    ax = Axes(x_range=[0,8,1], y_range=[0,8,1], tips=True)
+    # ax = NumberPlane(x_length=8, y_length=8)
+    ax = Axes(x_range=[0,80,10], y_range=[0,100,50], tips=True)
 
     graph = ax.plot(lambda x: x**2, x_range=[0.01,4], use_smoothing=True)
 
@@ -36,30 +37,51 @@ class Canvas(Scene):
           whichCuts = [(cp.gomoryMixedIntegerCut, {})],
           display = False, debug_print = False, use_cglp = False)
 
-    lambda_cuts = self.cutToLambda(cc)
-    cutGraphs = [ax.plot(i,x_range=range,use_smoothing=True) for i in lambda_cuts]
-    self.add(*cutGraphs)
+    # self.get_vertical_line
+    
+    colors = [RED, GREEN, BLUE, YELLOW]
+    i = 0
+    for lambda_cut, vertical in self.cutToLambda(cc):
+      if vertical:
+        point = ax.coords_to_point(lambda_cut, 10)
+        vline = ax.get_vertical_line(point)
+        self.add(vline)
+      else:
+        print("aber corte")
+        cutGraph = ax.plot(lambda_cut,x_range=range,use_smoothing=True, color=colors[i])
+        self.add(cutGraph)
+      i+=1
 
 
   @staticmethod
-  def cutToLambda(cuts):
+  def cutToLambda(cuts, normalize = False):
     lmbs = []
     for cut in cuts:
       # the cut has the form ax+by=c
+      print(cut)
+      a,b,c = cut.left.left[0], cut.left.left[1], cut.right
+      vertical = False
 
-      # case of b = 0
-      if cut.left.left[1]==0:
-        print(cut.right/cut.left.left[0])
-        lmb = lambda x : cut.right / cut.left.left[0]
+      if normalize: # normalize the array cuz maybe the coeffs are too big and manim has an issue when interpolating the function values
+        m = max([abs(a), abs(b), abs(c)])
+        a, b, c = a/m, b/m, c/m
+
+      print(a,b,c)
+
+      # case of b = 0, vertical line
+      if b == 0:
+        lmb, vertical = c / a, True
+
+      # case of a = 0, horizontal line
+      elif a == 0:
+        lmb = lambda x : c / b
 
       # case of y = (c-ax)/b
       else:
-        print(cut.right - cut.left.left[0],'x/',cut.left.left[1])
-        lmb = lambda x : (cut.right - (cut.left.left[0] * x) ) / cut.left.left[1]
-      
-      lmbs.append(lmb)
+        lmb = lambda x : (c - (a * x) ) / b
+
+      yield lmb, vertical
     
-    return  lmbs
 
 
   '''
