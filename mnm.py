@@ -6,6 +6,10 @@ from utils import GetIntersections#get_intersections_between_two_vmobs
 import coinor.cuppy.cuttingPlanes as cp
 from coinor.cuppy.milpInstance import MILPInstance
 
+# cut types
+# gomoryMixedIntegerCut (may have issues with manim's interpolation, but it's more efficient)
+# liftAndProject  (less efficient, but higher cut accuracy)
+
 class Canvas(Scene):
   def construct(self):
     # ax = NumberPlane(x_length=8, y_length=8)
@@ -37,9 +41,9 @@ class Canvas(Scene):
     self.add(*inter_points)
         
     sol, cc = cp.bnSolve(MILPInstance(module_name = 'examples.e2'),
-          whichCuts = [(cp.gomoryMixedIntegerCut, {})],   # this one generates some really odd cuts, and manim is buggy when interpolating those lines with too big coefficients in a small scale
+          whichCuts = [(cp.liftAndProject, {})],   # this one generates some really odd cuts, and manim is buggy when interpolating those lines with too big coefficients in a small scale
           # whichCuts = [(cp.liftAndProject, {})],
-          display = True, debug_print = False, use_cglp = False)
+          display = False, debug_print = False, use_cglp = False)
     sol_dot = Dot(ax.coords_to_point(*sol), color=RED)
     self.add(sol_dot)
     
@@ -49,10 +53,11 @@ class Canvas(Scene):
         point = ax.coords_to_point(lambda_cut, 10)
         vline = ax.get_vertical_line(point)
         self.add(vline)
+        vline.fade()
       else:
-        # print("aber corte")
         cutGraph = ax.plot(lambda_cut,x_range=range,use_smoothing=True, color=choice(colors))
         self.add(cutGraph)
+        # self.add(cutGraph.fade())
 
 
   @staticmethod
@@ -131,7 +136,7 @@ class Canvas(Scene):
       fix = np.array([fi(i) for i in x])
       fjx = np.array([fj(i) for i in x])
       idx = np.argwhere(np.diff(np.sign(fix - fjx))).flatten()  # find the intersections between the functions, all credits to stackOverflow
-      fi_fj = [np.array([x[i], fi(x[i])]) for i in idx]  # append the point of intersection, 3rd dimension is added for compatibility with manim
+      fi_fj = [np.array([x[i], fi(x[i])]) for i in idx]  # append the point of intersection
       inter.extend(fi_fj)
 
     return inter
