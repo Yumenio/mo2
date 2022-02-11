@@ -1,4 +1,11 @@
 from manim import *
+import itertools
+import numpy as np
+from random import choice
+from utils import GetIntersections#get_intersections_between_two_vmobs
+import coinor.cuppy.cuttingPlanes as cp
+from coinor.cuppy.milpInstance import MILPInstance
+
 
 class MyTestScene(Scene):
   def construct(self):
@@ -10,4 +17,17 @@ class MyTestScene(Scene):
 
     p = Dot(ax.coords_to_point(2,2), color=GREEN)
 
+
+
     self.add(ax, gr, p)
+
+def buildModelFunctions(model:MILPInstance):
+  A = model.A
+  b = model.b
+  c = model.c
+  print(A,b,c)
+
+
+if __name__ == "__main__":
+  model = MILPInstance('examples.e2')
+  lambdas = buildModelFunctions(model)
