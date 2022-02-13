@@ -3,16 +3,30 @@ from scipy.optimize import line_search
 import numpy as np
 import numdifftools as nd
 
-# f = lambda x,y : 5*x+8*y
-# gf = nd.Gradient(f)
+f = lambda x: (x[0])**2 + (x[1])**2
+gf = nd.Gradient(f)
+
+start_point = np.array([3, 3])
+start_point = np.array([1.8, 1.7])
+
+search_gradient = np.array([-1.0, -1.0])
+
+_min = f(start_point)
+best = start_point
+
+for i in range(10):
+  try:
+    res = line_search(f, gf, start_point, search_gradient)
+    start_point = start_point + res[0]*search_gradient
+    _min = min(_min, res[4])
+    print(res)
+    best = start_point
+  except:
+    print('The best result was', best, 'with f(x,y)=', _min)
+    break
 
 # start_point = np.array([1, f(1,1)])
 # search_gradient = np.array([-1.0, -1.0])
-
-# print(line_search(f, gf, start_point, search_gradient))
-
-
-
 
 
 # backtracking, no filduin
