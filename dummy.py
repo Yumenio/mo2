@@ -3,14 +3,15 @@ from scipy.optimize import line_search
 import numpy as np
 import numdifftools as nd
 
+f = lambda x: (x[0])**3 + (x[1])**2
 # f = lambda x: (x[0])**2 + (x[1])**2
-f = lambda x: (x[0])**2 + 3 * x[0] * x[1] + 12
+# f = lambda x: (x[0])**2 + 3 * x[0] * x[1] + 12
 gf = nd.Gradient(f)
 
 # start_point = np.array([1.8, 1.7])
 # search_gradient = np.array([-1.0, -1.0])
 
-start_point = np.array([1, 3])
+start_point = np.array([27, 16])
 search_gradient = -1*gf(start_point)
 # print(gf([1,3]))
 
