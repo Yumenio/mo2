@@ -3,7 +3,7 @@ from scipy.optimize import line_search
 import numpy as np
 import numdifftools as nd
 
-f = lambda x: (x[0])**3 + (x[1])**2
+f = lambda x: (x[0])**2 - (x[1])**2
 # f = lambda x: (x[0])**2 + (x[1])**2
 # f = lambda x: (x[0])**2 + 3 * x[0] * x[1] + 12
 gf = nd.Gradient(f)
@@ -12,7 +12,7 @@ gf = nd.Gradient(f)
 # search_gradient = np.array([-1.0, -1.0])
 
 start_point = np.array([27, 16])
-search_gradient = -1*gf(start_point)
+search_gradient = -1*gf(start_point)/10
 # print(gf([1,3]))
 
 best = start_point
