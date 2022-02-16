@@ -4,6 +4,7 @@ import numpy as np
 from scipy.optimize import line_search
 import json
 import sympy
+from input_parser import load_model
 
 class MyScene(ThreeDScene):
   def construct(self):
@@ -16,13 +17,11 @@ class MyScene(ThreeDScene):
     #       ]), v_range=[0, TAU], u_range=[-PI / 2, PI / 2],
     #       checkerboard_colors=[RED_D, RED_E], resolution=(15, 32)
     #   )
-    model_json = json.loads('model.json')
-    obj_sym = model_json.func
 
-
+    fp, constraints = load_model('model.json')
 
     f = lambda u,v: np.array([u,v, u**2 + 3*u*v])
-    fp = lambda x: x[0]**2 + 3*x[0]*x[1]
+    # fp = lambda x: x[0]**2 + 3*x[0]*x[1]
     constraints = []
 
 
