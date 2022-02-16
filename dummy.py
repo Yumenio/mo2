@@ -17,7 +17,10 @@ constraints = [Lambda(vars, i) for i in json_constraints]
 _ = obj_lambda(1,2)
 _2 = constraints[0](1,2)
 p = 0
-
+gradient = [diff(obj_sym, var) for var in vars]
+gradient = [ Lambda(vars, diff(obj_sym, var) ) for var in vars]
+print(gradient)
+a = 0
 # line search
   # f = lambda x: (x[0])**2 - (x[1])**2
   # # f = lambda x: (x[0])**2 + (x[1])**2
