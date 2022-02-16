@@ -18,7 +18,7 @@ class MyScene(ThreeDScene):
     #       checkerboard_colors=[RED_D, RED_E], resolution=(15, 32)
     #   )
 
-    fp, constraints = load_model('model.json')
+    vars, fp, constraints = load_model('model.json')
 
     f = lambda u,v: np.array([u,v, u**2 + 3*u*v])
     # fp = lambda x: x[0]**2 + 3*x[0]*x[1]
@@ -47,11 +47,16 @@ class MyScene(ThreeDScene):
     self.set_camera_orientation(phi=45 * DEGREES, theta=-30 * DEGREES)
     self.begin_ambient_camera_rotation(rate=0.1)
 
-    self.play(Rotate(c1, 0*DEGREES))
-    self.play(Rotate(graph, 0*DEGREES))
-    self.play(Rotate(axes, 0*DEGREES))
+    # self.play(Rotate(c1, 0*DEGREES))
+    # self.play(Rotate(graph, 0*DEGREES))
+    # self.play(Rotate(axes, 0*DEGREES))
 
-    gf = nd.Gradient(fp)
+    # gf = nd.Gradient(fp)
+    gradient = [sympy.diff(fp, var) for var in vars]
+    gradient = sympy.derive_by_array(fp, vars)
+    print(gradient)
+    print(fp)
+    gf = lambda x: np.array( [ gradient[0](x,y), gradient[1](x,y) ] )
     
     start_point = np.array([3, 1.8])
     search_gradient = -1*gf(start_point)/10

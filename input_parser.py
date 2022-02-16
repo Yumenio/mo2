@@ -11,4 +11,4 @@ def load_model(filepath):
   obj_sym = parse_expr(model_json['func'])
   obj_lambda = Lambda(vars, obj_sym)
   constraints = [Lambda(vars, i) for i in json_constraints]
-  return (obj_lambda, constraints)
+  return (vars, obj_lambda, constraints)
