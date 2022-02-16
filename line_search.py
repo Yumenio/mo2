@@ -2,6 +2,8 @@ from manim import *
 import numdifftools as nd
 import numpy as np
 from scipy.optimize import line_search
+import json
+import sympy
 
 class MyScene(ThreeDScene):
   def construct(self):
@@ -14,6 +16,9 @@ class MyScene(ThreeDScene):
     #       ]), v_range=[0, TAU], u_range=[-PI / 2, PI / 2],
     #       checkerboard_colors=[RED_D, RED_E], resolution=(15, 32)
     #   )
+    model_json = json.loads('model.json')
+    obj_sym = model_json.func
+
 
 
     f = lambda u,v: np.array([u,v, u**2 + 3*u*v])
