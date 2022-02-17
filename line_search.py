@@ -87,9 +87,9 @@ class MyScene(ThreeDScene):
       try:
         res = line_search(fp, gf, start_point, search_gradient)
         start_point = start_point + res[0]*search_gradient
-        for cons in constraints:
-          if not cons(start_point[0], start_point[1]):
-            break
+        search_gradient = -1*gf(start_point)/10
+        if not all([cons(start_point[0], start_point[1]) for cons in constraints]):
+          break
         print(start_point)
         best = start_point
         points.append(best)

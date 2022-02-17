@@ -37,9 +37,16 @@ def load_cp_model(filepath):
             a = solve(ineq, x)
             return a.args[0]
 
+  def closure_workaround(func):
+    return lambda x: func(x)
   
   json_constraints = [parse_expr(i) for i in model_json['constraints']]
   constraints = [get_cleared_constraint(i) for i in json_constraints]
+  eq_constraints = [ i.rhs for i in constraints]
+  lambda_constraints = [Lambda(x, i) for i in eq_constraints]
+  lambda_constraintsf = []
+  for l in lambda_constraints:
+    lambda_constraintsf.append(closure_workaround(l))
   obj_sym = parse_expr(model_json['func'])
   obj_lambda = solve(obj_sym, y)[0]
   lmb = Lambda(x, obj_lambda)
@@ -53,7 +60,7 @@ def load_cp_model(filepath):
   numVars = 2
 
 
-  return f, constraints, MILPInstance(A=A, b=b, c=c, sense=sense, integerIndices=[0,1], numVars= numVars)
+  return f, lambda_constraintsf, MILPInstance(A=A, b=b, c=c, sense=sense, integerIndices=[0,1], numVars= numVars)
 
 
 if __name__ == '__main__':

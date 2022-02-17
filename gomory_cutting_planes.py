@@ -42,8 +42,10 @@ class Canvas(Scene):
     self.add(*inter_points)
 
     f, constraints, module = load_cp_model('model_cp.json')
-
-    
+    for constr in constraints:
+      print(constr)
+      c_ = ax.plot(constr, x_range = range, use_smoothing=True)
+      self.play(Create(c_))
 
     sol, cc = cp.bnSolve(module,
           whichCuts = [(cp.liftAndProject, {})],   # this one generates some really odd cuts, and manim is buggy when interpolating those lines with too big coefficients in a small scale
