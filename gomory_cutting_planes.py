@@ -5,6 +5,7 @@ from random import choice
 from utils import GetIntersections#get_intersections_between_two_vmobs
 import coinor.cuppy.cuttingPlanes as cp
 from coinor.cuppy.milpInstance import MILPInstance
+from input_parser import load_cp_model
 
 # cut types
 # gomoryMixedIntegerCut (may have issues with manim's interpolation, but it's more efficient)
@@ -39,8 +40,12 @@ class Canvas(Scene):
 
     self.add(ax, r1,r2,r3)
     self.add(*inter_points)
-        
-    sol, cc = cp.bnSolve(MILPInstance(module_name = 'examples.e2'),
+
+    f, constraints, module = load_cp_model('model_cp.json')
+
+    
+
+    sol, cc = cp.bnSolve(module,
           whichCuts = [(cp.liftAndProject, {})],   # this one generates some really odd cuts, and manim is buggy when interpolating those lines with too big coefficients in a small scale
           # whichCuts = [(cp.liftAndProject, {})],
           display = False, debug_print = False, use_cglp = False)
@@ -56,7 +61,7 @@ class Canvas(Scene):
         vline.fade()
       else:
         cutGraph = ax.plot(lambda_cut,x_range=range,use_smoothing=True, color=choice(colors))
-        self.add(cutGraph)
+        # self.add(cutGraph)
         # self.add(cutGraph.fade())
 
 

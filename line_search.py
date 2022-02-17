@@ -58,7 +58,6 @@ class MyScene(ThreeDScene):
       )
 
 
-    # self.renderer.camera.light_source.move_to(3*IN) # changes the source of the light
     self.set_camera_orientation(phi=45 * DEGREES, theta=-30 * DEGREES)
     self.begin_ambient_camera_rotation(rate=0.1)
 
@@ -72,7 +71,6 @@ class MyScene(ThreeDScene):
     # gradient = sympy.derive_by_array(fp, vars)
     print(gf([1,2]))
     print(obj_sym)
-    # gf = lambda x: np.array( [ gradient[0](x,y), gradient[1](x,y) ] )
     
     start_point = np.array(initial_point)
     search_gradient = -1*gf(start_point)/10
