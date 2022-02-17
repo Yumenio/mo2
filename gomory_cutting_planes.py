@@ -41,7 +41,7 @@ class Canvas(Scene):
     # self.add(*inter_points)
 
     range = [-2,8]
-    f, constraints, module = load_cp_model('model_cp.json')
+    f, constraints, module = load_cp_model('model_cp_2.json')
     for constr in constraints:
       print('restriccion',constr)
       if isinstance(constr, tuple):
