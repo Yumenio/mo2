@@ -37,16 +37,30 @@ def load_cp_model(filepath):
             a = solve(ineq, x)
             return a.args[0]
 
+  def fix_single_clears(c):
+    if y in c.rhs.free_symbols:
+      return ('h', c.lhs)
+    elif x in c.rhs.free_symbols and y not in c.lhs.free_symbols:
+      return ('v', c.lhs)
+    else:
+      return c.rhs
+
   def closure_workaround(func):
-    return lambda x: func(x)
+    if not isinstance(func, tuple):
+      return lambda x: func(x)
+    else:
+      return func
   
+  asd = 0
+
   json_constraints = [parse_expr(i) for i in model_json['constraints']]
   constraints = [get_cleared_constraint(i) for i in json_constraints]
-  eq_constraints = [ i.rhs for i in constraints]
-  lambda_constraints = [Lambda(x, i) for i in eq_constraints]
+  eq_constraints = [ fix_single_clears(i) for i in constraints]
+  lambda_constraints = [Lambda(x, i) if not isinstance(i, tuple) else i for i in eq_constraints]
   lambda_constraintsf = []
   for l in lambda_constraints:
     lambda_constraintsf.append(closure_workaround(l))
+  
   obj_sym = parse_expr(model_json['func'])
   obj_lambda = solve(obj_sym, y)[0]
   lmb = Lambda(x, obj_lambda)
