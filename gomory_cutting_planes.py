@@ -37,7 +37,7 @@ class Canvas(Scene):
     # self.add(ax, r1,r2,r3)
     # self.add(*inter_points)
 
-    f, constraints, x_range, y_range, module = load_cp_model('model_cp_4.json')
+    f, constraints, x_range, y_range, module = load_cp_model('model_cp_3.json')
     ax = Axes(x_range= x_range+[1], y_range= y_range+[1], tips=True)
     for constr in constraints:
       print('restriccion',constr)
@@ -46,11 +46,9 @@ class Canvas(Scene):
         if type == 'v':
           point = ax.coords_to_point(intersect, y_range[1])
           c_ = ax.get_vertical_line(point)
-          # self.play(Create())
           pass
         if type == 'h':
           c_ = ax.plot(lambda x: intersect, x_range = x_range, use_smoothing=True)
-          # self.play(Create(c_))
       else:
         print(constr)
         c_ = ax.plot(constr, x_range = x_range, use_smoothing=True)
@@ -72,8 +70,14 @@ class Canvas(Scene):
         cutGraph = ax.plot(lambda_cut,x_range= x_range,use_smoothing=True, color=choice(colors))
         self.play(Create(cutGraph))
     
+
+    txt = '('+str( round(sol[0],2) )+','+str( round(sol[1], 2) )+')'
     self.play(Create(ax))
-    sol_dot = Dot(ax.coords_to_point(*sol), color=RED)
+    dot_coords = ax.coords_to_point(*sol)
+    sol_dot = Dot(dot_coords, color=RED)
+    dot_txt = Text(txt, font_size=20, color= PURE_GREEN)
+    self.play(Create(dot_txt))
+    self.play(dot_txt.animate.move_to(dot_coords))
     self.play(Create(sol_dot))
 
         

@@ -71,7 +71,7 @@ class MyScene(ThreeDScene):
     
     for c in constraints:
       print('testing if', c, 'holds at', initial_point, c(initial_point[0], initial_point[1]))
-    assert all([constraint(initial_point[0], initial_point[1]) for constraint in constraints]), "Invalid initial point"
+    assert all([constraint(initial_point[0], initial_point[1]) for constraint in constraints]), "Invalid initial point, specify one that meets all the constraints"
     
     best = start_point
 
