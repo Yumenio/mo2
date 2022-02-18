@@ -9,22 +9,16 @@ from input_parser import load_model
 class MyScene(ThreeDScene):
   def construct(self):
     axes = ThreeDAxes()
-    # sphere = Surface(
-    #       lambda u, v: np.array([
-    #           1.5 * np.cos(u) * np.cos(v),
-    #           1.5 * np.cos(u) * np.sin(v),
-    #           1.5 * np.sin(u)
-    #       ]), v_range=[0, TAU], u_range=[-PI / 2, PI / 2],
-    #       checkerboard_colors=[RED_D, RED_E], resolution=(15, 32)
-    #   )
-
-    # vars, fp, constraints = load_model('model.json')
-
 
     model_json = json.load(open('model.json'))
     json_vars = ' '.join(model_json['vars'])
     json_constraints = model_json['constraints']
     initial_point = model_json['initial_point']
+    try:
+      x_range = model_json['x_range']
+      y_range = model_json['y_range']
+    except:
+      raise "You must specify the range of coordinates, i.e x_range = [-4,4], y_range = [0,10]"
 
     # must be two variables only
     x, y = sympy.symbols(json_vars)
@@ -41,27 +35,27 @@ class MyScene(ThreeDScene):
 
 
     graph = Surface(
-          f, v_range=[-1, 1], u_range=[-1, 1],
+          f, v_range=x_range, u_range=y_range,
           checkerboard_colors=[RED_D, RED_E], resolution=(15, 32), fill_opacity=0.5
       )
 
 
 
-    c1 = Surface(
-          lambda u, v: np.array([
-              u,
-              v,
-              0
-          ]), v_range=[-2, 2], u_range=[-2, 2],
-          checkerboard_colors=[BLUE_A, BLUE_B], resolution=(15, 32),
-          fill_opacity=0.3
-      )
+    # c1 = Surface(
+    #       lambda u, v: np.array([
+    #           u,
+    #           v,
+    #           0
+    #       ]), v_range=x_range, u_range=y_range,
+    #       checkerboard_colors=[BLUE_A, BLUE_B], resolution=(15, 32),
+    #       fill_opacity=0.3
+    #   )
 
 
     self.set_camera_orientation(phi=45 * DEGREES, theta=-30 * DEGREES)
     self.begin_ambient_camera_rotation(rate=0.1)
 
-    self.play(Rotate(c1, 0*DEGREES))
+    # self.play(Rotate(c1, 0*DEGREES))
     self.play(Rotate(graph, 0*DEGREES))
     self.play(Rotate(axes, 0*DEGREES))
 
@@ -104,13 +98,8 @@ class MyScene(ThreeDScene):
     ppoints.extend(itt_points)
     ppoints.append(Dot3D(axes.coords_to_point(*points[-1]), color=GREEN))
 
-    print(points)
-    print('oieci',DEFAULT_DOT_RADIUS)
-
-
-    # self.play(Transform(graph, graph2))
 
     for p in ppoints:
       # self.add(p)
       self.play(Rotate(p, 0*DEGREES))
-    self.add(c1, graph, axes)
+    self.add(graph, axes)
