@@ -10,7 +10,7 @@ class MyScene(ThreeDScene):
   def construct(self):
     axes = ThreeDAxes()
 
-    model_json = json.load(open('model.json'))
+    model_json = json.load(open('model_ls.json'))
     json_vars = ' '.join(model_json['vars'])
     json_constraints = model_json['constraints']
     initial_point = model_json['initial_point']
@@ -18,7 +18,7 @@ class MyScene(ThreeDScene):
       x_range = model_json['x_range']
       y_range = model_json['y_range']
     except:
-      raise "You must specify the range of coordinates, i.e x_range = [-4,4], y_range = [0,10]"
+      raise Exception("You must specify the range of coordinates, i.e x_range = [-4,4], y_range = [0,10]")
 
     # must be two variables only
     x, y = sympy.symbols(json_vars)

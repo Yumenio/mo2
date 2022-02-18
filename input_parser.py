@@ -73,9 +73,11 @@ def load_cp_model(filepath):
   sense = ('Max', '<=')
   numVars = 2
 
+  x_range = model_json['x_range']
+  y_range = model_json['y_range']
 
-  return f, lambda_constraintsf, MILPInstance(A=A, b=b, c=c, sense=sense, integerIndices=[0,1], numVars= numVars)
+  return f, lambda_constraintsf, x_range, y_range, MILPInstance(A=A, b=b, c=c, sense=sense, integerIndices=[0,1], numVars= numVars)
 
 
 if __name__ == '__main__':
-  x = load_cp_model('model_cp.json')
+  x = load_cp_model('model_cp_3.json')

@@ -14,7 +14,6 @@ from input_parser import load_cp_model
 class Canvas(Scene):
   def construct(self):
     # ax = NumberPlane(x_length=8, y_length=8)
-    ax = Axes(x_range=[0,8,1], y_range=[0,8,1], tips=True)
 
     # graph = ax.plot(lambda x: x**2, x_range=[0.01,4], use_smoothing=True)
 
@@ -40,31 +39,29 @@ class Canvas(Scene):
     # self.add(ax, r1,r2,r3)
     # self.add(*inter_points)
 
-    range = [-2,8]
-    f, constraints, module = load_cp_model('model_cp_2.json')
+    f, constraints, x_range, y_range, module = load_cp_model('model_cp_2.json')
+    ax = Axes(x_range= x_range+[1], y_range= y_range+[1], tips=True)
     for constr in constraints:
       print('restriccion',constr)
       if isinstance(constr, tuple):
         type, intersect = constr
         if type == 'v':
-          point = ax.coords_to_point(intersect, 10)
+          point = ax.coords_to_point(intersect, y_range[1])
           c_ = ax.get_vertical_line(point)
           # self.play(Create())
           pass
         if type == 'h':
-          c_ = ax.plot(lambda x: intersect, x_range = range, use_smoothing=True)
+          c_ = ax.plot(lambda x: intersect, x_range = x_range, use_smoothing=True)
           # self.play(Create(c_))
       else:
         print(constr)
-        c_ = ax.plot(constr, x_range = range, use_smoothing=True)
+        c_ = ax.plot(constr, x_range = x_range, use_smoothing=True)
       self.play(Create(c_))
 
     sol, cc = cp.bnSolve(module,
           whichCuts = [(cp.liftAndProject, {})],   # this one generates some really odd cuts, and manim is buggy when interpolating those lines with too big coefficients in a small scale
           # whichCuts = [(cp.liftAndProject, {})],
           display = False, debug_print = False, use_cglp = False)
-    sol_dot = Dot(ax.coords_to_point(*sol), color=RED)
-    self.add(sol_dot)
     
     colors = [RED, GREEN, BLUE, YELLOW, PURPLE, GREY_BROWN, PINK]
     for lambda_cut, vertical in self.cutToLambda(cc):
@@ -74,8 +71,13 @@ class Canvas(Scene):
         self.add(vline)
         vline.fade()
       else:
-        cutGraph = ax.plot(lambda_cut,x_range=range,use_smoothing=True, color=choice(colors))
+        cutGraph = ax.plot(lambda_cut,x_range= x_range,use_smoothing=True, color=choice(colors))
         self.play(Create(cutGraph))
+    
+    self.play(Create(ax))
+    sol_dot = Dot(ax.coords_to_point(*sol), color=RED)
+    self.play(Create(sol_dot))
+
         
 
 
