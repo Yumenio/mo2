@@ -59,7 +59,6 @@ class Canvas(Scene):
           # whichCuts = [(cp.liftAndProject, {})],    # this one is less efficient and generates multiple repeated cuts
           display = False, debug_print = False, use_cglp = False)
     
-    # colors = [RED, GREEN, BLUE, YELLOW, PURPLE, GREY_BROWN, PINK, GOLD]
     for lambda_cut, vertical in self.cutToLambda(cc):
       if vertical:
         point = ax.coords_to_point(lambda_cut, 10)

@@ -6,11 +6,11 @@ import json
 import sympy
 from input_parser import load_model
 
-class MyScene(ThreeDScene):
+class ThreeDCanvas(ThreeDScene):
   def construct(self):
     axes = ThreeDAxes()
 
-    model_json = json.load(open('model_ls.json'))
+    model_json = json.load(open('model_ls_2.json'))
     json_vars = ' '.join(model_json['vars'])
     json_constraints = model_json['constraints']
     initial_point = model_json['initial_point']
@@ -19,6 +19,15 @@ class MyScene(ThreeDScene):
       y_range = model_json['y_range']
     except:
       raise Exception("You must specify the range of coordinates, i.e x_range = [-4,4], y_range = [0,10]")
+
+    try:
+      camera_phi = model_json['phi']
+      camera_theta = model_json['theta']
+    except:
+      camera_phi = 45
+      camera_theta = -30
+
+
 
     # must be two variables only
     x, y = sympy.symbols(json_vars)
@@ -40,19 +49,7 @@ class MyScene(ThreeDScene):
       )
 
 
-
-    # c1 = Surface(
-    #       lambda u, v: np.array([
-    #           u,
-    #           v,
-    #           0
-    #       ]), v_range=x_range, u_range=y_range,
-    #       checkerboard_colors=[BLUE_A, BLUE_B], resolution=(15, 32),
-    #       fill_opacity=0.3
-    #   )
-
-
-    self.set_camera_orientation(phi=45 * DEGREES, theta=-30 * DEGREES)
+    self.set_camera_orientation(phi=camera_phi * DEGREES, theta= camera_theta * DEGREES)
     self.begin_ambient_camera_rotation(rate=0.1)
 
     # self.play(Rotate(c1, 0*DEGREES))
@@ -77,13 +74,17 @@ class MyScene(ThreeDScene):
 
     points = [best]
 
-    for _ in range(20):
+    threshold = 0.001
+    while True:
       try:
         res = line_search(fp, gf, start_point, search_gradient)
         start_point = start_point + res[0]*search_gradient
-        search_gradient = -1*gf(start_point)/10
+        search_gradient = -1*gf(start_point)/2
+        
         if not all([cons(start_point[0], start_point[1]) for cons in constraints]):
-          break
+          break # not all constraints were TRUE
+        if fp(best) - fp(start_point) < threshold:
+          break # reached the threshold value, break the infinite loop
         print(start_point)
         best = start_point
         points.append(best)
@@ -98,8 +99,8 @@ class MyScene(ThreeDScene):
     ppoints.extend(itt_points)
     ppoints.append(Dot3D(axes.coords_to_point(*points[-1]), color=GREEN))
 
-
     for p in ppoints:
-      # self.add(p)
       self.play(Rotate(p, 0*DEGREES))
+    # self.play(Rotate(ppoints[0], 0*DEGREES))
+    # self.play(Rotate(ppoints[-1], 0*DEGREES))
     self.add(graph, axes)

@@ -1,6 +1,8 @@
 {
   "vars": ["x", "y"],
-  "func": "x**2 + 3*x*y",
-  "constraints": ["x >= -2", "y >= -2"],
-  "initial_point": [1, 3]
+  "func": "x**2 *y",
+  "constraints": ["x**2 + y**2 <= 3"],
+  "initial_point": [1, 1],
+  "x_range": [-2,2],
+  "y_range": [-2,2]
 }
