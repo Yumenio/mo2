@@ -13,8 +13,6 @@ from input_parser import load_cp_model
 
 class Canvas(Scene):
   def construct(self):
-    # ax = NumberPlane(x_length=8, y_length=8)
-
     # graph = ax.plot(lambda x: x**2, x_range=[0.01,4], use_smoothing=True)
 
     # f1 = lambda x: x-0.5
@@ -83,7 +81,6 @@ class Canvas(Scene):
 
   @staticmethod
   def cutToLambda(cuts, normalize = False):
-    lmbs = []
     for cut in cuts:
       # the cut has the form ax+by=c
       # print(cut)

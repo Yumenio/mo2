@@ -51,8 +51,6 @@ def load_cp_model(filepath):
     else:
       return func
   
-  asd = 0
-
   json_constraints = [parse_expr(i) for i in model_json['constraints']]
   constraints = [get_cleared_constraint(i) for i in json_constraints]
   eq_constraints = [ fix_single_clears(i) for i in constraints]
