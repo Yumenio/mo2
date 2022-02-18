@@ -25,7 +25,7 @@ class ThreeDCanvas(ThreeDScene):
       camera_theta = model_json['theta']
     except:
       camera_phi = 45
-      camera_theta = -30
+      camera_theta = -120
 
 
 
@@ -93,14 +93,21 @@ class ThreeDCanvas(ThreeDScene):
         
     print('The best result was', best, 'with f(x,y)=', fp(best))
 
+
     points = [ np.array([i[0], i[1], fp(i)]) for i in points] # in ndarray form
     itt_points = [Dot3D(axes.coords_to_point(*i), color=BLUE, radius=0.07) for i in points[1:-1]] # the middle steps points
     ppoints = [Dot3D(axes.coords_to_point(*points[0]), color=RED)]
     ppoints.extend(itt_points)
-    ppoints.append(Dot3D(axes.coords_to_point(*points[-1]), color=GREEN))
+    opt_coords = axes.coords_to_point(*points[-1])
+    ppoints.append(Dot3D(opt_coords, color=GREEN))
 
+    txt = '(' + str( round(points[-1][0],2) ) + ',' + str( round(points[-1][1],2) ) + ',' + str( round(points[-1][2],2) ) + ')'
+    dot_txt = Text(txt, font_size=20, color=PURE_GREEN)
+    
     for p in ppoints:
       self.play(Rotate(p, 0*DEGREES))
-    # self.play(Rotate(ppoints[0], 0*DEGREES))
-    # self.play(Rotate(ppoints[-1], 0*DEGREES))
+    
     self.add(graph, axes)
+    # self.add(dot_txt)
+    # self.play(dot_txt.animate.to_edge(DOWN))
+    # self.play(dot_txt.animate.to_edge(LEFT))
