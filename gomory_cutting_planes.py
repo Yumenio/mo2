@@ -2,7 +2,7 @@ from manim import *
 import itertools
 import numpy as np
 from random import choice
-from utils import GetIntersections#get_intersections_between_two_vmobs
+from utils import GetIntersections, colors#get_intersections_between_two_vmobs
 import coinor.cuppy.cuttingPlanes as cp
 from coinor.cuppy.milpInstance import MILPInstance
 from input_parser import load_cp_model
@@ -37,7 +37,7 @@ class Canvas(Scene):
     # self.add(ax, r1,r2,r3)
     # self.add(*inter_points)
 
-    f, constraints, x_range, y_range, module = load_cp_model('model_cp_2.json')
+    f, constraints, x_range, y_range, module = load_cp_model('model_cp_4.json')
     ax = Axes(x_range= x_range+[1], y_range= y_range+[1], tips=True)
     for constr in constraints:
       print('restriccion',constr)
@@ -57,11 +57,11 @@ class Canvas(Scene):
       self.play(Create(c_))
 
     sol, cc = cp.bnSolve(module,
-          whichCuts = [(cp.liftAndProject, {})],   # this one generates some really odd cuts, and manim is buggy when interpolating those lines with too big coefficients in a small scale
-          # whichCuts = [(cp.liftAndProject, {})],
+          whichCuts = [(cp.gomoryMixedIntegerCut, {})],   # this one generates some really odd cuts, and manim is buggy when interpolating those lines with too big coefficients in a small scale
+          # whichCuts = [(cp.liftAndProject, {})],    # this one is less efficient and generates multiple repeated cuts
           display = False, debug_print = False, use_cglp = False)
     
-    colors = [RED, GREEN, BLUE, YELLOW, PURPLE, GREY_BROWN, PINK]
+    # colors = [RED, GREEN, BLUE, YELLOW, PURPLE, GREY_BROWN, PINK, GOLD]
     for lambda_cut, vertical in self.cutToLambda(cc):
       if vertical:
         point = ax.coords_to_point(lambda_cut, 10)

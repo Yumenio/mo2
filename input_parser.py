@@ -68,7 +68,7 @@ def load_cp_model(filepath):
   A = np.array(model_json['A'])
   b = np.array(model_json['b'])
   c = np.array(model_json['c'])
-  sense = ('Max', '<=')
+  sense = ('Min', '<=')
   numVars = 2
 
   x_range = model_json['x_range']
